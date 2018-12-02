@@ -183,9 +183,16 @@ public final class Poller extends PollerBase implements Runnable
 
     public void stop()
     {
-        stopping.set(true);
-        retired = false;
-        selector.wakeup();
+        try {
+            stopping.set(true);
+            retired = false;
+            selector.wakeup();
+        } catch (IOException e) {
+            // ignore "File descriptor closed" but rethrow any others.
+            if (!"File descriptor closed".equals(e.getMessage()) {
+                throw e;
+            }
+        }
     }
 
     @Override
