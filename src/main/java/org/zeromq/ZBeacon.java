@@ -18,6 +18,7 @@ public class ZBeacon
     public static final String DEFAULT_BROADCAST_HOST     = "255.255.255.255";
 
     private final int             port;
+    private InetAddress           bindInetAddress;
     private InetAddress           broadcastInetAddress;
     private final BroadcastClient broadcastClient;
     private final BroadcastServer broadcastServer;
@@ -40,13 +41,19 @@ public class ZBeacon
     {
         this(host, port, beacon, ignoreLocalAddress, false);
     }
-
+    
     public ZBeacon(String host, int port, byte[] beacon, boolean ignoreLocalAddress, boolean blocking)
+    {
+        this(host, port, beacon, ignoreLocalAddress, blocking, null);
+    }
+
+    public ZBeacon(String host, int port, byte[] beacon, boolean ignoreLocalAddress, boolean blocking, String bindAddr)
     {
         this.port = port;
         this.beacon = beacon;
         try {
             broadcastInetAddress = InetAddress.getByName(host);
+            bindInetAddress = InetAddress.getByName(bindAddr);
         }
         catch (UnknownHostException unknownHostException) {
             throw new RuntimeException(unknownHostException);
@@ -141,6 +148,7 @@ public class ZBeacon
         {
             try {
                 broadcastChannel = DatagramChannel.open();
+                broadcastChannel.bind(new InetSocketAddress(bindInetAddress, 0));
                 broadcastChannel.socket().setBroadcast(true);
                 while (!interrupted()) {
                     try {
