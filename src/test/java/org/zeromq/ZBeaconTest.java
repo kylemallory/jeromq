@@ -106,7 +106,7 @@ public class ZBeaconTest
 
         final byte[] beacon = new byte[] { 'Z', 'R', 'E', 0x01, 0x2 };
         final byte[] prefix = new byte[] { 'Z', 'R', 'E', 0x01 };
-        final ZBeacon zbeacon = new ZBeacon(ZBeacon.DEFAULT_BROADCAST_HOST, port, beacon, true, true);
+        final ZBeacon zbeacon = new ZBeacon(ZBeacon.DEFAULT_BROADCAST_HOST, port, beacon, true, true, null);
         zbeacon.setPrefix(prefix);
 
         final AtomicLong counter = new AtomicLong();
