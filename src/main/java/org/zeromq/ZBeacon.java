@@ -18,10 +18,11 @@ public class ZBeacon
     public static final String DEFAULT_BROADCAST_HOST     = "255.255.255.255";
 
     private final int             port;
+    private InetAddress           bindInetAddress;
     private InetAddress           broadcastInetAddress;
     private final BroadcastClient broadcastClient;
     private final BroadcastServer broadcastServer;
-    private final byte[]          beacon;
+    private byte[]                beacon;
     private byte[]                prefix            = {};
     private long                  broadcastInterval = DEFAULT_BROADCAST_INTERVAL;
     private Listener              listener          = null;
@@ -38,15 +39,16 @@ public class ZBeacon
 
     public ZBeacon(String host, int port, byte[] beacon, boolean ignoreLocalAddress)
     {
-        this(host, port, beacon, ignoreLocalAddress, false);
+        this(host, port, beacon, ignoreLocalAddress, false, null);
     }
 
-    public ZBeacon(String host, int port, byte[] beacon, boolean ignoreLocalAddress, boolean blocking)
+    public ZBeacon(String host, int port, byte[] beacon, boolean ignoreLocalAddress, boolean blocking, String bindAddr)
     {
         this.port = port;
         this.beacon = beacon;
         try {
             broadcastInetAddress = InetAddress.getByName(host);
+            bindInetAddress = InetAddress.getByName(bindAddr);
         }
         catch (UnknownHostException unknownHostException) {
             throw new RuntimeException(unknownHostException);
@@ -83,6 +85,16 @@ public class ZBeacon
             broadcastServer.interrupt();
             broadcastServer.join();
         }
+    }
+
+    public void setBeacon(byte[] beacon)
+    {
+        this.beacon = beacon;
+    }
+
+    public byte[] getBeacon()
+    {
+        return beacon;
     }
 
     public void setPrefix(byte[] prefix)
@@ -131,6 +143,7 @@ public class ZBeacon
         {
             try {
                 broadcastChannel = DatagramChannel.open();
+                broadcastChannel.bind(new InetSocketAddress(bindInetAddress, 0));
                 broadcastChannel.socket().setBroadcast(true);
                 while (!interrupted()) {
                     try {
