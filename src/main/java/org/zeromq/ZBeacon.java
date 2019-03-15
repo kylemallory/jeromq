@@ -143,7 +143,7 @@ public class ZBeacon
         {
             try {
                 broadcastChannel = DatagramChannel.open();
-                broadcastChannel.bind(new InetSocketAddress(bindInetAddress, 0));
+                broadcastChannel.socket().bind(new InetSocketAddress(bindInetAddress, 0));
                 broadcastChannel.socket().setBroadcast(true);
                 while (!interrupted()) {
                     try {
