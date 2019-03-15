@@ -81,7 +81,7 @@ public class ZBeaconTest
         byte[] beacon = new byte[] { 'H', 'Y', 'D', 'R', 'A', 0x01, 0x12, 0x34 };
         byte[] prefix = new byte[] { 'H', 'Y', 'D', 'R', 'A', 0x01 };
         int port = Utils.findOpenPort();
-        ZBeacon zbeacon = new ZBeacon("255.255.255.255", port, beacon, false, true);
+        ZBeacon zbeacon = new ZBeacon("255.255.255.255", port, beacon, false, true, null);
         zbeacon.setPrefix(prefix);
         zbeacon.setListener(new Listener()
         {
